@@ -25,7 +25,7 @@ const GLchar* FragmentShaderSrc =
 "frag_color = vec4(0.95f,0.96f,0.0f,1.0f);"
 "}";
 
-
+//trop nul ce triangle
 
 
 // Déclaration de la fonction de rappel pour les événements clavier
