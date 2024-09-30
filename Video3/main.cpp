@@ -11,7 +11,7 @@ GLFWwindow* window=NULL;
 bool gwireframe = false;
 
 const GLchar *  vertexShadersrc =
-"#version 330 core\n"
+"#version 330 core\n
 "layout (location = 0) in vec3 pos;"
 "void main()"
 "{"
