@@ -27,6 +27,8 @@ const GLchar* FragmentShaderSrc =
 "}";
 
 
+
+
 // Déclaration de la fonction de rappel pour les événements clavier
 void glfw_onKey(GLFWwindow* window, int key, int scancode, int action, int mods);
 void show_fps(GLFWwindow* window);
