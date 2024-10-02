@@ -130,5 +130,28 @@ ShaderProgram::~ShaderProgram()
         }
 
     }
+        GLint ShaderProgram:: getUniformLocation(const GLchar *name){
+            std::map<string,int>::iterator it = mUniformLocations.find(name);
+            if(it == mUniformLocations.end()){
+                mUniformLocations[name] = glGetUniformLocation(mHandle,name);
+            }
+            return mUniformLocations[name];
+        }
+
     
-    ;
+        void ShaderProgram::setUniform(const GLchar *name, const glm::vec2 &v){
+            GLint loc = getUniformLocation(name);
+            glUniform2f(loc,v.x,v.y);
+
+        }   
+        void ShaderProgram::setUniform(const GLchar *name, const glm::vec3 &v){
+            GLint loc = getUniformLocation(name);
+            glUniform3f(loc,v.x,v.y,v.z);
+
+        }
+        void ShaderProgram::setUniform(const GLchar *name, const glm::vec4 &v){
+            GLint loc = getUniformLocation(name);
+            glUniform4f(loc,v.x,v.y,v.z,v.w);
+
+        }
+
