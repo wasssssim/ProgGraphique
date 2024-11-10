@@ -57,89 +57,66 @@ int main()
 	lightingShader.loadShaders("shaders/lighting_dir_point_spot.vert", "shaders/lighting_dir_point_spot.frag");
 
 	// Load meshes and textures
-	const int numModels = 4;
+	const int numModels = 6;
 	Mesh mesh[numModels];
 	Texture2D texture[numModels];
 
-	/*vmesh[0].loadOBJ("models/barrel.obj");
-	mesh[1].loadOBJ("models/woodcrate.obj");
-	mesh[2].loadOBJ("models/robot.obj");*/
-	mesh[0].loadOBJ("models/floorD.obj");
-	mesh[1].loadOBJ("models/Saloon.obj");
-	mesh[2].loadOBJ("models/paille.obj");
-	mesh[3].loadOBJ("models/wagon.obj");
+
+	mesh[0].loadOBJ("models/Saloon.obj");
+	mesh[1].loadOBJ("models/paille.obj");
+	mesh[2].loadOBJ("models/wagon.obj");
+	mesh[3].loadOBJ("models/Road.obj");
+	mesh[4].loadOBJ("models/sahara.obj");
+	mesh[5].loadOBJ("models/taxi.obj");
+
+	
 
 
 
+	texture[0].loadTexture("textures/Saloon.png", true);
+	texture[1].loadTexture("textures/paille.png", true);
+	texture[2].loadTexture("textures/wagon.jpg", true);
+	texture[3].loadTexture("textures/Road.png", true);
+	texture[4].loadTexture("textures/sahara.png", true);
+	texture[5].loadTexture("textures/Taxi.png", true);
 
-
-	/*mesh[4].loadOBJ("models/bowling_pin.obj");
-	mesh[5].loadOBJ("models/bunny.obj");
-	mesh[6].loadOBJ("models/lampPost.obj");
-	mesh[7].loadOBJ("models/lampPost.obj");
-	mesh[8].loadOBJ("models/lampPost.obj");
 
 
 	
 
-	texture[0].loadTexture("textures/barrel_diffuse.png", true);
-	texture[1].loadTexture("textures/woodcrate_diffuse.jpg", true);
-	texture[2].loadTexture("textures/robot_diffuse.jpg", true);*/
-	texture[0].loadTexture("textures/desert.png", true);
-	texture[1].loadTexture("textures/Saloon.png", true);
-	texture[2].loadTexture("textures/paille.png", true);
-	texture[3].loadTexture("textures/wagon.jpg", true);
-
-
-
-	/*texture[4].loadTexture("textures/AMF.tga", true);
-	texture[5].loadTexture("textures/bunny_diffuse.jpg", true);
-	texture[6].loadTexture("textures/lamp_post_diffuse.png", true);
-	texture[7].loadTexture("textures/lamp_post_diffuse.png", true);
-	texture[8].loadTexture("textures/lamp_post_diffuse.png", true);*/
 
 
 
 	// Model positions	
 	glm::vec3 modelPos[] = {
-		/*glm::vec3(-3.5f, 0.0f, 0.0f),	// barrel
-		glm::vec3(3.5f, 0.0f, 0.0f),	// crate
-		glm::vec3(0.0f, 0.0f, -2.0f),*/	// robot
-		glm::vec3(0.0f, 0.0f, 0.0f),// floor
-		glm::vec3(-10.0f, 10.0f, -18.0f),
+
+		glm::vec3(-10.0f, 1.0f, -50.0f),
 		glm::vec3(-10.0f, 15.0f, 133.0f),
-		glm::vec3(-10.0f, 13.0f, 90.0f)
+		glm::vec3(-10.0f, 13.0f, 90.0f),
+		glm::vec3(0.0f, 0.0f, 2.0f),	
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		 glm::vec3(0.0f, 4.0f, -5.0f)
 
 		
 
-	// floor
-		/*glm::vec3(0.0f, 0.0f, 2.0f),	// pin
-		glm::vec3(-2.0f, 0.0f, 2.0f),	// bunny
-		glm::vec3(-5.5f, 0.0f, 0.0f),	// lamp post 1
-		glm::vec3(0.0f, 0.0f, 0.0f),	// lamp post 2
-		glm::vec3(5.5f, 0.0f, 0.0f),		// lamp post 2
-		glm::vec3(1.5f, 0.0f, 2.0f)	*/	//  Barriere
+		
+
+
 
 	};
 
 	// Model scale
 	glm::vec3 modelScale[] = {
-		/*glm::vec3(1.0f, 1.0f, 1.0f),	// barrel
-		glm::vec3(1.0f, 1.0f, 1.0f),	// crate
-		glm::vec3(1.0f, 1.0f, 10f),*/	// robot
-		glm::vec3(45.0f, 20.0f, 35.0f),	// floor
-		glm::vec3(5.0f, 4.0f, 10.0f),	// Saloon
-		glm::vec3(15.0f, 10.0f, 14.0f),	// paille
-		glm::vec3(15.0f, 10.0f, 14.0f)	// wagon
+
+		glm::vec3(5.0f, 5.0f, 4.0f),	// Saloon
+		glm::vec3(1.0f, 1.0f, 1.0f),	// paille
+		glm::vec3(1.0f, 1.0f, 1.0f),	// wagon
+		glm::vec3(50.1f, 10.1f, 15.1f),	// Road
+		glm::vec3(40.0f, 10.0f, 40.0f),	// Saloon
+		glm::vec3(5.0f, 5.0f, 5.0f),	// Taxi
 
 
 
-		/*glm::vec3(0.1f, 0.1f, 0.1f),	// pin
-		glm::vec3(0.7f, 0.7f, 0.7f),	// bunny
-		glm::vec3(1.0f, 1.0f, 1.0f),	// lamp post 1
-		glm::vec3(1.0f, 1.0f, 1.0f),	// lamp post 2
-		glm::vec3(1.0f, 1.0f, 1.0f)	,	// lamp post 3
-		glm::vec3(0.5f, 0.5f, 0.5f)	,*/	// barrierer 
 
 
 	};
@@ -164,7 +141,7 @@ int main()
 
 		// Poll for and process events
 		glfwPollEvents();
-		update(deltaTime,modelPos[2]);
+		update(deltaTime,modelPos[5]);
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
