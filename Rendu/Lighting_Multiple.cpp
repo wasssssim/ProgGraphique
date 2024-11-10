@@ -57,7 +57,7 @@ int main()
 	lightingShader.loadShaders("shaders/lighting_dir_point_spot.vert", "shaders/lighting_dir_point_spot.frag");
 
 	// Load meshes and textures
-	const int numModels = 8;
+	const int numModels = 10;
 	Mesh mesh[numModels];
 	Texture2D texture[numModels];
 
@@ -69,6 +69,10 @@ int main()
 	mesh[5].loadOBJ("models/sahara2.obj");
 	mesh[6].loadOBJ("models/taxi2.obj");
 	mesh[7].loadOBJ("models/poto2.obj");
+	mesh[8].loadOBJ("models/Moon2.obj");
+	mesh[9].loadOBJ("models/raille7.obj");
+
+
 
 	
 
@@ -83,6 +87,10 @@ int main()
 	texture[5].loadTexture("textures/sahara.png", true);
 	texture[6].loadTexture("textures/Taxi.png", true);
 	texture[7].loadTexture("textures/poto.png", true);
+	texture[8].loadTexture("textures/Moon.png", true);
+	texture[9].loadTexture("textures/raille.png", true);
+
+
 
 
 
@@ -96,12 +104,16 @@ int main()
 	glm::vec3 modelPos[] = {
 		glm::vec3(0.0f, 0.0f, 0.0f), // Road
 		glm::vec3(-10.0f, 0.0f, -15.0f),	// Road
-		glm::vec3(-10.0f, 1.0f, -5.0f), //Saloon
+		glm::vec3(-10.0f, 0.0f, -5.5f), //Saloon
 		glm::vec3(-10.0f, 15.0f, 133.0f), //paille
 		glm::vec3(-10.0f, 13.0f, 90.0f),//wagon
 		glm::vec3(0.0f, 0.0f, 0.0f),//sahara
-		glm::vec3(0.0f, 4.0f, -5.0f),//taxi
-		glm::vec3(-157.0f, -3.0f, -50.0f),//taxi
+		glm::vec3(0.0f, 1.0f, 0.0f),//taxi
+		glm::vec3(-30.0f, 0.0f, -8.0f),//poto
+		glm::vec3(100.0f, 50.0f, -100.0f), // Moon
+		glm::vec3(10.0f, 1.0f, 15.0f),	// raille
+
+
 
 
 
@@ -115,16 +127,17 @@ int main()
 
 	// Model scale
 	glm::vec3 modelScale[] = {
-		glm::vec3(150.1f, 10.1f, 15.1f),	// Road
-		glm::vec3(150.1f, 10.1f, 15.1f),	// Road
-
-
+		glm::vec3(250.1f, 10.1f, 15.1f),	// Road
+		glm::vec3(250.1f, 10.1f, 15.1f),	// Road
 		glm::vec3(5.0f, 3.0f, 4.0f),	// Saloon
 		glm::vec3(1.0f, 1.0f, 1.0f),	// paille
 		glm::vec3(1.0f, 1.0f, 1.0f),	// wagon
 		glm::vec3(200.0f, 10.0f, 200.0f),	// Sahra
 		glm::vec3(5.0f, 5.0f, 5.0f),	// Taxi
 		glm::vec3(75.0f, 75.0f, 75.0f),	// 	POto 
+		glm::vec3(1.0f, 1.0f, 1.0f),	// Moon
+		glm::vec3(1.0f, 1.0f, 1.0f),	// raille
+
 
 
 
