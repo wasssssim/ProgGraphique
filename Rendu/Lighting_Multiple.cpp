@@ -57,28 +57,33 @@ int main()
 	lightingShader.loadShaders("shaders/lighting_dir_point_spot.vert", "shaders/lighting_dir_point_spot.frag");
 
 	// Load meshes and textures
-	const int numModels = 6;
+	const int numModels = 8;
 	Mesh mesh[numModels];
 	Texture2D texture[numModels];
 
+	mesh[0].loadOBJ("models/Road2.obj");
+	mesh[1].loadOBJ("models/Road2.obj");
+	mesh[2].loadOBJ("models/Saloon2.obj");
+	mesh[3].loadOBJ("models/paille.obj");
+	mesh[4].loadOBJ("models/wagon2.obj");
+	mesh[5].loadOBJ("models/sahara2.obj");
+	mesh[6].loadOBJ("models/taxi2.obj");
+	mesh[7].loadOBJ("models/poto2.obj");
 
-	mesh[0].loadOBJ("models/Saloon.obj");
-	mesh[1].loadOBJ("models/paille.obj");
-	mesh[2].loadOBJ("models/wagon.obj");
-	mesh[3].loadOBJ("models/Road.obj");
-	mesh[4].loadOBJ("models/sahara.obj");
-	mesh[5].loadOBJ("models/taxi.obj");
+	
 
 	
 
 
+	texture[0].loadTexture("textures/Road.png", true);
+	texture[1].loadTexture("textures/Road.png", true);
+	texture[2].loadTexture("textures/Saloon.png", true);
+	texture[3].loadTexture("textures/paille.png", true);
+	texture[4].loadTexture("textures/wagon.jpg", true);
+	texture[5].loadTexture("textures/sahara.png", true);
+	texture[6].loadTexture("textures/Taxi.png", true);
+	texture[7].loadTexture("textures/poto.png", true);
 
-	texture[0].loadTexture("textures/Saloon.png", true);
-	texture[1].loadTexture("textures/paille.png", true);
-	texture[2].loadTexture("textures/wagon.jpg", true);
-	texture[3].loadTexture("textures/Road.png", true);
-	texture[4].loadTexture("textures/sahara.png", true);
-	texture[5].loadTexture("textures/Taxi.png", true);
 
 
 
@@ -89,13 +94,16 @@ int main()
 
 	// Model positions	
 	glm::vec3 modelPos[] = {
+		glm::vec3(0.0f, 0.0f, 0.0f), // Road
+		glm::vec3(-10.0f, 0.0f, -15.0f),	// Road
+		glm::vec3(-10.0f, 1.0f, -5.0f), //Saloon
+		glm::vec3(-10.0f, 15.0f, 133.0f), //paille
+		glm::vec3(-10.0f, 13.0f, 90.0f),//wagon
+		glm::vec3(0.0f, 0.0f, 0.0f),//sahara
+		glm::vec3(0.0f, 4.0f, -5.0f),//taxi
+		glm::vec3(-157.0f, -3.0f, -50.0f),//taxi
 
-		glm::vec3(-10.0f, 1.0f, -50.0f),
-		glm::vec3(-10.0f, 15.0f, 133.0f),
-		glm::vec3(-10.0f, 13.0f, 90.0f),
-		glm::vec3(0.0f, 0.0f, 2.0f),	
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		 glm::vec3(0.0f, 4.0f, -5.0f)
+
 
 		
 
@@ -107,13 +115,17 @@ int main()
 
 	// Model scale
 	glm::vec3 modelScale[] = {
+		glm::vec3(150.1f, 10.1f, 15.1f),	// Road
+		glm::vec3(150.1f, 10.1f, 15.1f),	// Road
 
-		glm::vec3(5.0f, 5.0f, 4.0f),	// Saloon
+
+		glm::vec3(5.0f, 3.0f, 4.0f),	// Saloon
 		glm::vec3(1.0f, 1.0f, 1.0f),	// paille
 		glm::vec3(1.0f, 1.0f, 1.0f),	// wagon
-		glm::vec3(50.1f, 10.1f, 15.1f),	// Road
-		glm::vec3(40.0f, 10.0f, 40.0f),	// Saloon
+		glm::vec3(200.0f, 10.0f, 200.0f),	// Sahra
 		glm::vec3(5.0f, 5.0f, 5.0f),	// Taxi
+		glm::vec3(75.0f, 75.0f, 75.0f),	// 	POto 
+
 
 
 
@@ -125,7 +137,8 @@ int main()
 	glm::vec3 pointLightPos[3] = {
 		glm::vec3(-5.0f, 3.8f, 0.0f),
 		glm::vec3(0.5f,  3.8f, 0.0f),
-		glm::vec3(5.0f,  3.8,  0.0f)
+		glm::vec3(5.0f,  3.8,  0.0f),
+
 	};
 
 
@@ -141,7 +154,7 @@ int main()
 
 		// Poll for and process events
 		glfwPollEvents();
-		update(deltaTime,modelPos[5]);
+		update(deltaTime,modelPos[6]);
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -163,22 +176,22 @@ int main()
 
 		// Must be called BEFORE setting uniforms because setting uniforms is done
 		// on the currently active shader program.
-		lightingShader.use();
+		lightingShader.use(); 
 		lightingShader.setUniform("model", glm::mat4(1.0));  // do not need to translate the models so just send the identity matrix
 		lightingShader.setUniform("view", view);
 		lightingShader.setUniform("projection", projection);
 		lightingShader.setUniform("viewPos", viewPos);
 
 		// Directional light
-		lightingShader.setUniform("sunLight.direction", glm::vec3(0.0f, -0.9f, -0.17f));
-		lightingShader.setUniform("sunLight.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
-		lightingShader.setUniform("sunLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));		// dark
-		lightingShader.setUniform("sunLight.specular", glm::vec3(0.1f, 0.1f, 0.1f));
+		lightingShader.setUniform("sunLight.direction", glm::vec3(0.5f, -0.5f, -0.2f)); 
+		lightingShader.setUniform("sunLight.ambient", glm::vec3(0.3f, 0.2f, 0.2f));
+		lightingShader.setUniform("sunLight.diffuse", glm::vec3(1.0f, 0.6f, 0.3f)); 	// dark
+		lightingShader.setUniform("sunLight.specular", glm::vec3(0.5f, 0.4f, 0.3f));
 
 		// Point Light 1
-		lightingShader.setUniform("pointLights[0].ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+		lightingShader.setUniform("pointLights[0].ambient", glm::vec3(0.3f, 0.2f, 0.2f));
 		lightingShader.setUniform("pointLights[0].diffuse", glm::vec3(0.0f, 1.0f, 0.1f));	// green-ish light
-		lightingShader.setUniform("pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		lightingShader.setUniform("pointLights[0].specular", glm::vec3(0.5f, 0.4f, 0.3f));
 		lightingShader.setUniform("pointLights[0].position", pointLightPos[0]);
 		lightingShader.setUniform("pointLights[0].constant", 1.0f);
 		lightingShader.setUniform("pointLights[0].linear", 0.22f);
