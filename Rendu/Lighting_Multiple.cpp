@@ -58,8 +58,8 @@ int main()
 	lightingShader.loadShaders("shaders/lighting_dir_point_spot.vert", "shaders/lighting_dir_point_spot.frag");
 
 	// Load meshes and textures
-	const int numModels = 29;
-	const int nbobj = 29;
+	const int numModels = 32;
+	const int nbobj = 32;
 
 	
 	Mesh mesh[numModels];
@@ -103,6 +103,10 @@ int main()
 				
 				"Train2",
 				"Tractor2",
+				"Farm",
+
+				"Barn2",
+				"ble",
 
 
 
@@ -161,6 +165,10 @@ std::string files_txt[nbobj] = {
 
 	"Train.png",
 	"Tractor.png",
+	"Farm.png",
+
+	"Barn.png",
+	"ble.png",
 
 
 
@@ -225,6 +233,12 @@ for(int i = 0; i < nbobj; i++) {
 
 		glm::vec3(-105.0f, 1.0f, -25.0f), // Train
 		glm::vec3(-10.0f, 1.0f, -16.0f),	// Tractor
+		glm::vec3(-10.0f, 1.0f, -65.5f), // Ferme
+
+		glm::vec3(-50.0f, 10.0f, -65.5f), // Ferme
+		glm::vec3(-50.0f, 1.0f, -85.5f), // ble
+
+
 
 
 
@@ -272,6 +286,14 @@ for(int i = 0; i < nbobj; i++) {
 
 		glm::vec3(10.0f, 10.0f, 10.0f),	// Train
 		glm::vec3(0.3f, 0.3f, 0.3f),	// Tractor
+		glm::vec3(1.0f, 1.0f, 1.0f),	// Ferme
+
+		glm::vec3(0.30f, 0.30f, 0.30f),	// Barn
+		glm::vec3(1.0f, 1.0f, 1.0f),	// ble
+
+
+
+
 
 
 
