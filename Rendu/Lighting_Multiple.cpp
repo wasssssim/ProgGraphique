@@ -40,6 +40,7 @@ void glfw_onMouseScroll(GLFWwindow* window, double deltaX, double deltaY);
 void update(double elapsedTime,glm::vec3&);
 void showFPS(GLFWwindow* window);
 bool initOpenGL();
+void initraille(Mesh mesh, Texture2D texture);
 
 //-----------------------------------------------------------------------------
 // Main Application Entry Point
@@ -60,7 +61,7 @@ int main()
 	const int numModels = 10;
 	Mesh mesh[numModels];
 	Texture2D texture[numModels];
-
+	
 	mesh[0].loadOBJ("models/Road2.obj");
 	mesh[1].loadOBJ("models/Road2.obj");
 	mesh[2].loadOBJ("models/Saloon2.obj");
@@ -71,6 +72,7 @@ int main()
 	mesh[7].loadOBJ("models/poto2.obj");
 	mesh[8].loadOBJ("models/Moon2.obj");
 	mesh[9].loadOBJ("models/raille7.obj");
+
 
 
 
@@ -111,7 +113,6 @@ int main()
 		glm::vec3(0.0f, 1.0f, 0.0f),//taxi
 		glm::vec3(-30.0f, 0.0f, -8.0f),//poto
 		glm::vec3(100.0f, 50.0f, -100.0f), // Moon
-		glm::vec3(10.0f, 1.0f, 15.0f),	// raille
 
 
 
@@ -136,7 +137,7 @@ int main()
 		glm::vec3(5.0f, 5.0f, 5.0f),	// Taxi
 		glm::vec3(75.0f, 75.0f, 75.0f),	// 	POto 
 		glm::vec3(1.0f, 1.0f, 1.0f),	// Moon
-		glm::vec3(1.0f, 1.0f, 1.0f),	// raille
+		glm::vec3(5.0f, 5.0f, 5.0f),	// raille
 
 
 
