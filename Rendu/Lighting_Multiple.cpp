@@ -40,7 +40,7 @@ void glfw_onMouseScroll(GLFWwindow* window, double deltaX, double deltaY);
 void update(double elapsedTime,glm::vec3&);
 void showFPS(GLFWwindow* window);
 bool initOpenGL();
-void initraille(Mesh mesh, Texture2D texture);
+//void initroad(Mesh* mesh,Texture2D* texture,glm::vec3* modelPos,glm::vec3* modelScale);
 
 //-----------------------------------------------------------------------------
 // Main Application Entry Point
@@ -58,47 +58,130 @@ int main()
 	lightingShader.loadShaders("shaders/lighting_dir_point_spot.vert", "shaders/lighting_dir_point_spot.frag");
 
 	// Load meshes and textures
-	const int numModels = 10;
+	const int numModels = 29;
+	const int nbobj = 29;
+
+	
 	Mesh mesh[numModels];
 	Texture2D texture[numModels];
+	std::string files_obj[nbobj] = {
+				"Road2",
+				"Road2",
+				"Saloon2",
+
+				"paille",
+				"wagon2",
+				"sahara2",
+
+				"taxi2",	
+				"poto2",
+				"Moon2",
+
+				"raille7",
+				"raille7",
+				"raille7",
+
+				"raille7",
+				"raille7",
+				"raille7",
+
+				"raille7",
+				"raille7",
+				"raille7",
+
+				"raille7",
+				"raille7",
+				"raille7",
+
+				"raille7",
+				"raille7",
+				"raille7",
+
+				"raille7",
+				"raille7",
+				"raille7",
+				
+				"Train2",
+				"Tractor2",
+
+
+
+
+
+};
+
+// Boucle pour charger chaque modèle avec le chemin complet
+for(int i=0 ; i < nbobj; i++) {
+    std::string fullPath = "models/" + files_obj[i] + ".obj";  // Construction du chemin complet
+    mesh[i].loadOBJ(fullPath.c_str());  // Conversion en C-string pour loadOBJ
+}
+
+
+
 	
-	mesh[0].loadOBJ("models/Road2.obj");
-	mesh[1].loadOBJ("models/Road2.obj");
-	mesh[2].loadOBJ("models/Saloon2.obj");
-	mesh[3].loadOBJ("models/paille.obj");
-	mesh[4].loadOBJ("models/wagon2.obj");
-	mesh[5].loadOBJ("models/sahara2.obj");
-	mesh[6].loadOBJ("models/taxi2.obj");
-	mesh[7].loadOBJ("models/poto2.obj");
-	mesh[8].loadOBJ("models/Moon2.obj");
-	mesh[9].loadOBJ("models/raille7.obj");
+
+	
+// Tableau contenant le nom complet des fichiers de texture avec extension
+std::string files_txt[nbobj] = {
+    "Road.png",
+    "Road.png",
+    "Saloon.png",
+
+    "paille.png",
+    "wagon.jpg",
+    "sahara.png",
+
+    "Taxi.png",
+    "poto.png",
+    "Moon.png",
+
+    "raille.png",
+	"raille.png",
+    "raille.png",
+
+    "raille.png",
+    "raille.png",
+    "raille.png",
+
+    "raille.png",
+	"raille.png",
+    "raille.png",
+
+	"raille.png",
+    "raille.png",
+    "raille.png",
+
+    "raille.png",
+	"raille.png",
+    "raille.png",
+
+	"raille.png",
+    "raille.png",
+    "raille.png",
+
+	"Train.png",
+	"Tractor.png",
+
+
+
+
+
+
+
+};
+int indice = 0;
+// Boucle pour charger chaque texture en ajoutant le chemin de base
+for(int i = 0; i < nbobj; i++) {
+    std::string fullPath = "textures/" + files_txt[i];  // Construction du chemin complet
+    texture[i].loadTexture(fullPath.c_str(), true);  // Conversion en C-string pour loadTexture
+	indice=indice+1;
+}
+
 
 
 
 
 	
-
-	
-
-
-	texture[0].loadTexture("textures/Road.png", true);
-	texture[1].loadTexture("textures/Road.png", true);
-	texture[2].loadTexture("textures/Saloon.png", true);
-	texture[3].loadTexture("textures/paille.png", true);
-	texture[4].loadTexture("textures/wagon.jpg", true);
-	texture[5].loadTexture("textures/sahara.png", true);
-	texture[6].loadTexture("textures/Taxi.png", true);
-	texture[7].loadTexture("textures/poto.png", true);
-	texture[8].loadTexture("textures/Moon.png", true);
-	texture[9].loadTexture("textures/raille.png", true);
-
-
-
-
-
-
-	
-
 
 
 
@@ -107,38 +190,88 @@ int main()
 		glm::vec3(0.0f, 0.0f, 0.0f), // Road
 		glm::vec3(-10.0f, 0.0f, -15.0f),	// Road
 		glm::vec3(-10.0f, 0.0f, -5.5f), //Saloon
+
 		glm::vec3(-10.0f, 15.0f, 133.0f), //paille
 		glm::vec3(-10.0f, 13.0f, 90.0f),//wagon
 		glm::vec3(0.0f, 0.0f, 0.0f),//sahara
+
 		glm::vec3(0.0f, 1.0f, 0.0f),//taxi
 		glm::vec3(-30.0f, 0.0f, -8.0f),//poto
 		glm::vec3(100.0f, 50.0f, -100.0f), // Moon
 
+		glm::vec3(-25.0f, 1.0f, 20.0f), // Raille
+		glm::vec3(-35.0f, 1.0f, 20.0f), // Raille
+		glm::vec3(-45.0f, 1.0f, 20.0f), // Raille
 
+		glm::vec3(-55.0f, 1.0f, 20.0f), // Raille
+		glm::vec3(-65.0f, 1.0f, 20.0f), // Raille
+		glm::vec3(-75.0f, 1.0f, 20.0f), // Raille
 
+		glm::vec3(-85.0f, 1.0f, 20.0f), // Raille
+		glm::vec3(-95.0f, 1.0f, 20.0f), // Raille
+		glm::vec3(-105.0f, 1.0f, 20.0f), // Raille
 
+		glm::vec3(-25.0f, 1.0f, -25.0f), // Raille
+		glm::vec3(-35.0f, 1.0f, -25.0f), // Raille
+		glm::vec3(-45.0f, 1.0f, -25.0f), // Raille
 
-		
+		glm::vec3(-55.0f, 1.0f, -25.0f), // Raille
+		glm::vec3(-65.0f, 1.0f, -25.0f),// Raille
+		glm::vec3(-75.0f, 1.0f, -25.0f),// Raille
 
-		
+		glm::vec3(-85.0f, 1.0f, -25.0f),// Raille
+		glm::vec3(-95.0f, 1.0f, -25.0f),// Raille
+		glm::vec3(-105.0f, 1.0f, -25.0f),// Raille
+
+		glm::vec3(-105.0f, 1.0f, -25.0f), // Train
+		glm::vec3(-10.0f, 1.0f, -16.0f),	// Tractor
+
 
 
 
 	};
 
+
 	// Model scale
 	glm::vec3 modelScale[] = {
 		glm::vec3(250.1f, 10.1f, 15.1f),	// Road
 		glm::vec3(250.1f, 10.1f, 15.1f),	// Road
-		glm::vec3(5.0f, 3.0f, 4.0f),	// Saloon
+		glm::vec3(5.0f, 7.0f, 4.0f),	// Saloon
+
 		glm::vec3(1.0f, 1.0f, 1.0f),	// paille
 		glm::vec3(1.0f, 1.0f, 1.0f),	// wagon
 		glm::vec3(200.0f, 10.0f, 200.0f),	// Sahra
+
 		glm::vec3(5.0f, 5.0f, 5.0f),	// Taxi
 		glm::vec3(75.0f, 75.0f, 75.0f),	// 	POto 
 		glm::vec3(1.0f, 1.0f, 1.0f),	// Moon
-		glm::vec3(5.0f, 5.0f, 5.0f),	// raille
 
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+		glm::vec3(5.0f, 1.0f, 5.0f),	// raille
+
+		glm::vec3(10.0f, 10.0f, 10.0f),	// Train
+		glm::vec3(0.3f, 0.3f, 0.3f),	// Tractor
 
 
 
@@ -155,7 +288,9 @@ int main()
 
 	};
 
-
+	// Initialiser le circuit de rails carrés
+// Initialiser le circuit de rails carrés
+//initroad(mesh, texture, modelPos, modelScale);
 	double lastTime = glfwGetTime();
 
 	// Rendering loop
@@ -169,6 +304,7 @@ int main()
 		// Poll for and process events
 		glfwPollEvents();
 		update(deltaTime,modelPos[6]);
+		update(deltaTime,modelPos[27]);
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -469,3 +605,10 @@ void showFPS(GLFWwindow* window)
 
 	frameCount++;
 }
+/*void initroad(Mesh* mesh, Texture2D* texture, glm::vec3* modelPos, glm::vec3* modelScale)
+{
+	//mesh[22].loadOBJ("models/Road2.obj");
+	//texture[22].loadTexture("textures/Road.png", true);
+	modelPos[22] = glm::vec3(-95.0f, 1.0f, -20.0f), // Raille
+	modelScale[22] = glm::vec3(5.0f, 1.0f, 5.0f);	// raille
+	 }*/
