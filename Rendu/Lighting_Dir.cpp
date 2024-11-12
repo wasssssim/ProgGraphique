@@ -1,345 +1,212 @@
 //-----------------------------------------------------------------------------
-// This code demonstrates how to implement the Blinn-Phong lighting model for a 
-// Directional light source using OpenGL 3.3 or a forward compatible
-// OpenGL 3.0 rendering context. 
+// Includes and Defines
 //-----------------------------------------------------------------------------
 #include <iostream>
-#include <sstream>
+#include <vector>
 #include <string>
-#define GLEW_STATIC
-#include "GL/glew.h"	// Important - this header must come before glfw3 header
+#include <cassert>
+#include <sstream>
+#include <fstream>
+#include "GL/glew.h"
 #include "GLFW/glfw3.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-
-#include "ShaderProgram.h"
 #include "Texture2D.h"
-#include "Camera.h"
 #include "Mesh.h"
-
+#include "ShaderProgram.h"
+#include "Camera.h"
 
 // Global Variables
-const char* APP_TITLE = "Introduction to Modern OpenGL - Directional Light";
+const char* APP_TITLE = "Blé Automatique";
 int gWindowWidth = 1024;
 int gWindowHeight = 768;
 GLFWwindow* gWindow = NULL;
-bool gWireframe = false;
-glm::vec4 gClearColor(0.23f, 0.38f, 0.47f, 1.0f);
+glm::vec4 gClearColor(0.06f, 0.06f, 0.07f, 1.0f);
+FPSCamera fpsCamera(glm::vec3(0.0f, 10.5f, 10.0f));
 
-FPSCamera fpsCamera(glm::vec3(10.0f, 10.0f, 10.0f));
-const double ZOOM_SENSITIVITY = -3.0;
-const float MOVE_SPEED = 25.0; // units per second
-const float MOUSE_SENSITIVITY = 0.1f;
-
-// Function prototypes
-void glfw_onKey(GLFWwindow* window, int key, int scancode, int action, int mode);
-void glfw_onFramebufferSize(GLFWwindow* window, int width, int height);
-void glfw_onMouseScroll(GLFWwindow* window, double deltaX, double deltaY);
-void update(double elapsedTime);
-void showFPS(GLFWwindow* window);
+// OpenGL settings
 bool initOpenGL();
 
-//-----------------------------------------------------------------------------
-// Main Application Entry Point
-//-----------------------------------------------------------------------------
-int main()
-{
-	if (!initOpenGL())
-	{
-		// An error occured
-		std::cerr << "GLFW initialization failed" << std::endl;
-		return -1;
-	}
+// Function prototypes
+void showFPS(GLFWwindow* window);
+void update(double elapsedTime);
+void ajouterBle(int nombreBle, float espacement, const std::string& nomModele, const std::string& nomTexture);
 
-	ShaderProgram lightingShader;
-	lightingShader.loadShaders("shaders/lighting_dir.vert", "shaders/lighting_dir.frag");
+// Vectors to store Mesh, Texture, positions, and scales
+std::vector<Mesh> mesh;
+std::vector<Texture2D> texture;
+std::vector<glm::vec3> positions;
+std::vector<glm::vec3> echelles;
 
-	// Load meshes and textures
-	const int numModels = 6;
-	Mesh mesh[numModels];
-	Texture2D texture[numModels];
+int main() {
+    if (!initOpenGL()) {
+        std::cerr << "Échec de l'initialisation de GLFW" << std::endl;
+        return -1;
+    }
 
-	mesh[0].loadOBJ("models/barrel.obj");
-	mesh[1].loadOBJ("models/woodcrate.obj");
-	mesh[2].loadOBJ("models/robot.obj");
-	mesh[3].loadOBJ("models/floor4.obj");
-	mesh[4].loadOBJ("models/bowling_pin.obj");
-	mesh[5].loadOBJ("models/bunny.obj");
-	
-	texture[0].loadTexture("textures/barrel_diffuse.png", true);
-	texture[1].loadTexture("textures/woodcrate_diffuse.jpg", true);
-	texture[2].loadTexture("textures/robot_diffuse.jpg", true);
-	texture[3].loadTexture("textures/desert.png", true);
-	texture[4].loadTexture("textures/AMF.tga", true);
-	texture[5].loadTexture("textures/bunny_diffuse.jpg", true);
+    ShaderProgram lightingShader;
+    lightingShader.loadShaders("shaders/lighting.vert", "shaders/lighting.frag");
 
-	// Model positions
-	glm::vec3 modelPos[] = {
-		glm::vec3(-3.5f, 0.0f, 0.0f),	// barrel
-		glm::vec3(3.5f, 0.0f, 0.0f),	// crate
-		glm::vec3(0.0f, 0.0f, -2.0f),	// robot
-		glm::vec3(0.0f, 0.0f, 0.0f),	// floor
-		glm::vec3(0.0f, 0.0f, 2.0f),	// pin
-		glm::vec3(-2.0f, 0.0f, 2.0f)	// bunny
-	};
+    // Appel de la fonction pour ajouter des instances de blé
+    ajouterBle(100, 2.0f, "ble", "ble.png");
 
-	// Model scale
-	glm::vec3 modelScale[] = {
-		glm::vec3(1.0f, 1.0f, 1.0f),	// barrel
-		glm::vec3(1.0f, 1.0f, 1.0f),	// crate
-		glm::vec3(1.0f, 1.0f, 1.0f),	// robot
-		glm::vec3(50.0f, 15.0f, 50.0f),	// floor
-		glm::vec3(0.1f, 0.1f, 0.1f),	// pin
-		glm::vec3(0.7f, 0.7f, 0.7f)		// bunny
-	};
+    double lastTime = glfwGetTime();
 
+    // Boucle de rendu
+    while (!glfwWindowShouldClose(gWindow)) {
+        double currentTime = glfwGetTime();
+        double deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
 
-	double lastTime = glfwGetTime();
-	float angle = 0.0f;
+        showFPS(gWindow);
+        update(deltaTime);
 
-	// Rendering loop
-	while (!glfwWindowShouldClose(gWindow))
-	{
-		showFPS(gWindow);
+        // Clear the screen
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		double currentTime = glfwGetTime();
-		double deltaTime = currentTime - lastTime;
+        glm::mat4 view = fpsCamera.getViewMatrix();
+        glm::mat4 projection = glm::perspective(glm::radians(fpsCamera.getFOV()), 
+                                                (float)gWindowWidth / gWindowHeight, 0.1f, 200.0f);
 
-		// Poll for and process events
-		glfwPollEvents();
-		update(deltaTime);
+        lightingShader.use();
+        lightingShader.setUniform("view", view);
+        lightingShader.setUniform("projection", projection);
 
-		// Clear the screen
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // Rendu de tous les modèles, y compris les instances de blé
+        for (size_t i = 0; i < mesh.size(); i++) {
+            glm::mat4 model = glm::translate(glm::mat4(1.0f), positions[i]) * glm::scale(glm::mat4(1.0f), echelles[i]);
+            lightingShader.setUniform("model", model);
 
-		glm::mat4 model(1.0), view(1.0), projection(1.0);
+            // Paramètres de matériau
+            lightingShader.setUniform("material.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
+            lightingShader.setUniformSampler("material.diffuseMap", 0);
+            lightingShader.setUniform("material.specular", glm::vec3(0.8f, 0.8f, 0.8f));
+            lightingShader.setUniform("material.shininess", 32.0f);
 
-		// Create the View matrix
-		view = fpsCamera.getViewMatrix();
+            // Lier la texture et dessiner le modèle
+            texture[i].bind(0);
+            mesh[i].draw();
+            texture[i].unbind(0);
+        }
 
-		// Create the projection matrix
-		projection = glm::perspective(glm::radians(fpsCamera.getFOV()), (float)gWindowWidth / (float)gWindowHeight, 0.1f, 200.0f);
+        // Swap buffers et gestion des événements
+        glfwSwapBuffers(gWindow);
+        glfwPollEvents();
+    }
 
-		// Must be called BEFORE setting uniforms because setting uniforms is done on the currently active shader program.
-		lightingShader.use();
-
-		// Directional light
-		lightingShader.setUniform("view", view);
-		lightingShader.setUniform("projection", projection);
-		lightingShader.setUniform("viewPos", fpsCamera.getPosition());
-		lightingShader.setUniform("dirLight.direction", glm::vec3(0.0f, -0.9f, -0.17f));
-		lightingShader.setUniform("dirLight.ambient",   glm::vec3(0.2f, 0.2f, 0.2f));
-		lightingShader.setUniform("dirLight.diffuse",   glm::vec3(1.0f, 1.0f, 1.0f));
-		lightingShader.setUniform("dirLight.specular",  glm::vec3(1.0f, 1.0f, 1.0f));
-				
-		// Render the scene
-		for (int i = 0; i < numModels; i++)
-		{
-			model = glm::translate(glm::mat4(1.0), modelPos[i]) * glm::scale(glm::mat4(1.0), modelScale[i]);
-			lightingShader.setUniform("model", model);
-
-			// Set material properties
-			lightingShader.setUniform("material.ambient", glm::vec3(0.1f, 0.1f, 0.1f));
-			lightingShader.setUniformSampler("material.diffuseMap", 0);
-			lightingShader.setUniform("material.specular", glm::vec3(0.8f, 0.8f, 0.8f));
-			lightingShader.setUniform("material.shininess", 32.0f);
-
-			texture[i].bind(0);		// set the texture before drawing.
-			mesh[i].draw();			// Render the OBJ mesh
-			texture[i].unbind(0);
-		}
-
-		// Swap front and back buffers
-		glfwSwapBuffers(gWindow);
-
-		lastTime = currentTime;
-	}
-
-	glfwTerminate();
-
-	return 0;
+    glfwTerminate();
+    return 0;
 }
 
 //-----------------------------------------------------------------------------
-// Initialize GLFW and OpenGL
+// Fonction pour ajouter dynamiquement des instances de blé
 //-----------------------------------------------------------------------------
-bool initOpenGL()
-{
-	// Intialize GLFW 
-	// GLFW is configured.  Must be called before calling any GLFW functions
-	if (!glfwInit())
-	{
-		// An error occured
-		std::cerr << "GLFW initialization failed" << std::endl;
-		return false;
-	}
+void ajouterBle(int nombreBle, float espacement, const std::string& nomModele, const std::string& nomTexture) {
+    Mesh nouveauMesh;
+    Texture2D nouvelleTexture;
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);	// forward compatible with newer versions of OpenGL as they become available but not backward compatible (it will not run on devices that do not support OpenGL 3.3
+    // Charger le modèle .obj du blé
+    std::string cheminModele = "models/" + nomModele + ".obj";
+    if (!nouveauMesh.loadOBJ(cheminModele)) {
+        std::cerr << "Erreur : Impossible de charger le modèle " << cheminModele << std::endl;
+        return;
+    }
 
+    // Charger la texture du blé
+    std::string cheminTexture = "textures/" + nomTexture;
+    if (!nouvelleTexture.loadTexture(cheminTexture, true)) {
+        std::cerr << "Erreur : Impossible de charger la texture " << cheminTexture << std::endl;
+        return;
+    }
 
-	// Create an OpenGL 3.3 core, forward compatible context window
-	gWindow = glfwCreateWindow(gWindowWidth, gWindowHeight, APP_TITLE, NULL, NULL);
-	if (gWindow == NULL)
-	{
-		std::cerr << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return false;
-	}
+    // Créer une grille d'instances de blé en fonction du nombre spécifié
+    for (int i = 0; i < sqrt(nombreBle); i++) {
+        for (int j = 0; j < sqrt(nombreBle); j++) {
+            float x = i * espacement;
+            float z = j * espacement;
 
-	// Make the window's context the current one
-	glfwMakeContextCurrent(gWindow);
+            mesh.push_back(nouveauMesh);
+            texture.push_back(nouvelleTexture);
+            positions.push_back(glm::vec3(x, 0.0f, z));
+            echelles.push_back(glm::vec3(1.0f, 1.0f, 1.0f));
+        }
+    }
+}
 
-	// Initialize GLEW
-	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK)
-	{
-		std::cerr << "Failed to initialize GLEW" << std::endl;
-		return false;
-	}
+//-----------------------------------------------------------------------------
+// Initialize OpenGL
+//-----------------------------------------------------------------------------
+bool initOpenGL() {
+    if (!glfwInit()) {
+        std::cerr << "Erreur lors de l'initialisation de GLFW" << std::endl;
+        return false;
+    }
 
-	// Set the required callback functions
-	glfwSetKeyCallback(gWindow, glfw_onKey);
-	glfwSetFramebufferSizeCallback(gWindow, glfw_onFramebufferSize);
-	glfwSetScrollCallback(gWindow, glfw_onMouseScroll);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    gWindow = glfwCreateWindow(gWindowWidth, gWindowHeight, APP_TITLE, NULL, NULL);
+    if (gWindow == NULL) {
+        std::cerr << "Erreur lors de la création de la fenêtre GLFW" << std::endl;
+        glfwTerminate();
+        return false;
+    }
 
-	// Hides and grabs cursor, unlimited movement
-	glfwSetInputMode(gWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetCursorPos(gWindow, gWindowWidth / 2.0, gWindowHeight / 2.0);
+    glfwMakeContextCurrent(gWindow);
+    glewExperimental = GL_TRUE;
+    if (glewInit() != GLEW_OK) {
+        std::cerr << "Erreur lors de l'initialisation de GLEW" << std::endl;
+        return false;
+    }
 
-	glClearColor(gClearColor.r, gClearColor.g, gClearColor.b, gClearColor.a);
-
-    // Define the viewport dimensions
-    int w, h;
-    glfwGetFramebufferSize( gWindow, &w, &h); // For retina display
-    glViewport(0, 0, w, h);
-    
-    //    glViewport(0, 0, gWindowWidth, gWindowHeight);
-
+    glClearColor(gClearColor.r, gClearColor.g, gClearColor.b, gClearColor.a);
     glEnable(GL_DEPTH_TEST);
 
-	return true;
+    return true;
 }
 
 //-----------------------------------------------------------------------------
-// Is called whenever a key is pressed/released via GLFW
+// Show FPS
 //-----------------------------------------------------------------------------
-void glfw_onKey(GLFWwindow* window, int key, int scancode, int action, int mode)
-{
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
-	
-	if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
-	{
-		gWireframe = !gWireframe;
-		if (gWireframe)
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		else
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
+void showFPS(GLFWwindow* window) {
+    static double previousSeconds = 0.0;
+    static int frameCount = 0;
+    double currentSeconds = glfwGetTime();
+    double elapsedSeconds = currentSeconds - previousSeconds;
+
+    if (elapsedSeconds > 0.25) {
+        previousSeconds = currentSeconds;
+        double fps = (double)frameCount / elapsedSeconds;
+        double msPerFrame = 1000.0 / fps;
+
+        std::ostringstream outs;
+        outs.precision(3);
+        outs << std::fixed << APP_TITLE << " - FPS: " << fps << " - Frame Time: " << msPerFrame << " (ms)";
+        glfwSetWindowTitle(window, outs.str().c_str());
+
+        frameCount = 0;
+    }
+
+    frameCount++;
 }
 
 //-----------------------------------------------------------------------------
-// Is called when the window is resized
+// Update each frame
 //-----------------------------------------------------------------------------
-void glfw_onFramebufferSize(GLFWwindow* window, int width, int height)
-{
-	gWindowWidth = width;
-	gWindowHeight = height;
+void update(double elapsedTime) {
+    // Camera orientation and movement
+    double mouseX, mouseY;
+    glfwGetCursorPos(gWindow, &mouseX, &mouseY);
+    fpsCamera.rotate((float)(gWindowWidth / 2.0 - mouseX) * 0.1f, 
+                     (float)(gWindowHeight / 2.0 - mouseY) * 0.1f);
+    glfwSetCursorPos(gWindow, gWindowWidth / 2.0, gWindowHeight / 2.0);
 
-    // Define the viewport dimensions
-    int w, h;
-    glfwGetFramebufferSize( gWindow, &w, &h); // For retina display
-    glViewport(0, 0, w, h);
-    
-    //    glViewport(0, 0, gWindowWidth, gWindowHeight);
-
-}
-
-//-----------------------------------------------------------------------------
-// Called by GLFW when the mouse wheel is rotated
-//-----------------------------------------------------------------------------
-void glfw_onMouseScroll(GLFWwindow* window, double deltaX, double deltaY)
-{
-	double fov = fpsCamera.getFOV() + deltaY * ZOOM_SENSITIVITY;
-
-	fov = glm::clamp(fov, 1.0, 120.0);
-
-	fpsCamera.setFOV((float)fov);
-}
-
-//-----------------------------------------------------------------------------
-// Update stuff every frame
-//-----------------------------------------------------------------------------
-void update(double elapsedTime)
-{
-	// Camera orientation
-	double mouseX, mouseY;
-
-	// Get the current mouse cursor position delta
-	glfwGetCursorPos(gWindow, &mouseX, &mouseY);
-
-	// Rotate the camera the difference in mouse distance from the center screen.  Multiply this delta by a speed scaler
-	fpsCamera.rotate((float)(gWindowWidth / 2.0 - mouseX) * MOUSE_SENSITIVITY, (float)(gWindowHeight / 2.0 - mouseY) * MOUSE_SENSITIVITY);
-
-	// Clamp mouse cursor to center of screen
-	glfwSetCursorPos(gWindow, gWindowWidth / 2.0, gWindowHeight / 2.0);
-
-	// Camera FPS movement
-
-	// Forward/backward
-	if (glfwGetKey(gWindow, GLFW_KEY_W) == GLFW_PRESS)
-		fpsCamera.move(MOVE_SPEED * (float)elapsedTime * fpsCamera.getLook());
-	else if (glfwGetKey(gWindow, GLFW_KEY_S) == GLFW_PRESS)
-		fpsCamera.move(MOVE_SPEED * (float)elapsedTime * -fpsCamera.getLook());
-
-	// Strafe left/right
-	if (glfwGetKey(gWindow, GLFW_KEY_A) == GLFW_PRESS)
-		fpsCamera.move(MOVE_SPEED * (float)elapsedTime * -fpsCamera.getRight());
-	else if (glfwGetKey(gWindow, GLFW_KEY_D) == GLFW_PRESS)
-		fpsCamera.move(MOVE_SPEED * (float)elapsedTime * fpsCamera.getRight());
-
-	// Up/down
-	if (glfwGetKey(gWindow, GLFW_KEY_Z) == GLFW_PRESS)
-		fpsCamera.move(MOVE_SPEED * (float)elapsedTime * glm::vec3(0.0f, 1.0f, 0.0f));
-	else if (glfwGetKey(gWindow, GLFW_KEY_X) == GLFW_PRESS)
-		fpsCamera.move(MOVE_SPEED * (float)elapsedTime * -glm::vec3(0.0f, 1.0f, 0.0f));
-}
-
-//-----------------------------------------------------------------------------
-// Code computes the average frames per second, and also the average time it takes
-// to render one frame.  These stats are appended to the window caption bar.
-//-----------------------------------------------------------------------------
-void showFPS(GLFWwindow* window)
-{
-	static double previousSeconds = 0.0;
-	static int frameCount = 0;
-	double elapsedSeconds;
-	double currentSeconds = glfwGetTime(); // returns number of seconds since GLFW started, as double float
-
-	elapsedSeconds = currentSeconds - previousSeconds;
-
-	// Limit text updates to 4 times per second
-	if (elapsedSeconds > 0.25)
-	{
-		previousSeconds = currentSeconds;
-		double fps = (double)frameCount / elapsedSeconds;
-		double msPerFrame = 1000.0 / fps;
-
-		// The C++ way of setting the window title
-		std::ostringstream outs;
-		outs.precision(3);	// decimal places
-		outs << std::fixed
-			<< APP_TITLE << "    "
-			<< "FPS: " << fps << "    "
-			<< "Frame Time: " << msPerFrame << " (ms)";
-		glfwSetWindowTitle(window, outs.str().c_str());
-
-		// Reset for next average.
-		frameCount = 0;
-	}
-
-	frameCount++;
+    if (glfwGetKey(gWindow, GLFW_KEY_W) == GLFW_PRESS)
+        fpsCamera.move(35.0f * (float)elapsedTime * fpsCamera.getLook());
+    if (glfwGetKey(gWindow, GLFW_KEY_S) == GLFW_PRESS)
+        fpsCamera.move(35.0f * (float)elapsedTime * -fpsCamera.getLook());
+    if (glfwGetKey(gWindow, GLFW_KEY_A) == GLFW_PRESS)
+        fpsCamera.move(35.0f * (float)elapsedTime * -fpsCamera.getRight());
+    if (glfwGetKey(gWindow, GLFW_KEY_D) == GLFW_PRESS)
+        fpsCamera.move(35.0f * (float)elapsedTime * fpsCamera.getRight());
 }
