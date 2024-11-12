@@ -58,7 +58,7 @@ int main()
 	lightingShader.loadShaders("shaders/lighting_dir_point_spot.vert", "shaders/lighting_dir_point_spot.frag");
 
 	// Load meshes and textures
-	const int numModels = 99;
+	const int numModels = 120;
 	const int nbobj = 13;
 
 	
@@ -197,6 +197,12 @@ initble(mesh,texture,modelPos,modelScale,47,17,		-120.0f,40.0f,1.0f,		1.0f,1.0f,
 initble(mesh,texture,modelPos,modelScale,64,17,		-120.0f,60.0f,1.0f,		1.0f,1.0f,1.0f		,"ble","ble.png");
 initble(mesh,texture,modelPos,modelScale,81,17,		-105.0f, -25.0f, 1.0f,	5.0f, 5.0f, 1.0f	,"raille7","raille.png");
 initble(mesh,texture,modelPos,modelScale,98,1,		-105.0f,-25.0f, 35.0f,	5.0f, 5.0f, 5.0f	,"Satellite","Satellite.png");
+initble(mesh,texture,modelPos,modelScale,99,1,		65.0f,-20.0f, 1.0f,		5.0f, 5.0f, 5.0f	,"RailleC","raille.png");
+initble(mesh,texture,modelPos,modelScale,100,1,		65.0f,-20.0f, 1.0f,		5.0f, 5.0f, 5.0f	,"RailleC","raille.png");
+initble(mesh,texture,modelPos,modelScale,101,1,		65.0f,-5.0f, 1.0f,		5.0f, 5.0f, 5.0f	,"RailleC","raille.png");
+initble(mesh,texture,modelPos,modelScale,102,1,		65.0f,10.0f, 1.0f,		5.0f, 5.0f, 5.0f	,"RailleC","raille.png");
+initble(mesh,texture,modelPos,modelScale,103,17,	-105.0f, 15.0f, 1.0f,	5.0f, 5.0f, 1.0f	,"raille7","raille.png");
+
 
 
 
