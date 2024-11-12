@@ -26,8 +26,8 @@ GLFWwindow* gWindow = NULL;
 bool gWireframe = false;
 bool gFlashlightOn = true;
 glm::vec4 gClearColor(0.06f, 0.06f, 0.07f, 1.0f);
-void initble(Mesh* mesh, Texture2D* texture, glm::vec3* modelpos, glm::vec3* modelscale, int indice, int nb_itr, float x, float y, const std::string& objName, const std::string& textureName) ;
-
+void initble(Mesh* mesh, Texture2D* texture, glm::vec3* modelpos, glm::vec3* modelscale, int indice, int nb_itr, float pos_x, float pos_y,float pos_z,float scale_x,float scale_y,float scale_z , const std::string& objName, const std::string& textureName) ;
+void updateSatellitePosition(glm::vec3& satellitePos, const glm::vec3& moonPos, float orbitRadius, float orbitSpeed, double time) ;
 FPSCamera fpsCamera(glm::vec3(0.0f, 10.5f, 10.0f));
 const double ZOOM_SENSITIVITY = -3.0;
 const float MOVE_SPEED = 35.0; // units per second
@@ -59,7 +59,7 @@ int main()
 
 	// Load meshes and textures
 	const int numModels = 99;
-	const int nbobj = 31;
+	const int nbobj = 13;
 
 	
 	Mesh mesh[numModels];
@@ -77,30 +77,6 @@ int main()
 				"poto2",
 				"Moon2",
 
-				"raille7",
-				"raille7",
-				"raille7",
-
-				"raille7",
-				"raille7",
-				"raille7",
-
-				"raille7",
-				"raille7",
-				"raille7",
-
-				"raille7",
-				"raille7",
-				"raille7",
-
-				"raille7",
-				"raille7",
-				"raille7",
-
-				"raille7",
-				"raille7",
-				"raille7",
-				
 				"Train2",
 				"Tractor2",
 				"Farm",
@@ -137,30 +113,6 @@ std::string files_txt[nbobj] = {
     "Taxi.png",
     "poto.png",
     "Moon.png",
-
-    "raille.png",
-	"raille.png",
-    "raille.png",
-
-    "raille.png",
-    "raille.png",
-    "raille.png",
-
-    "raille.png",
-	"raille.png",
-    "raille.png",
-
-	"raille.png",
-    "raille.png",
-    "raille.png",
-
-    "raille.png",
-	"raille.png",
-    "raille.png",
-
-	"raille.png",
-    "raille.png",
-    "raille.png",
 
 	"Train.png",
 	"Tractor.png",
@@ -205,39 +157,14 @@ modelPos[5] = glm::vec3(0.0f, 0.0f, 0.0f); // Sahara
 
 modelPos[6] = glm::vec3(0.0f, 1.0f, 0.0f); // Taxi
 modelPos[7] = glm::vec3(-30.0f, 0.0f, -8.0f); // Poto
-modelPos[8] = glm::vec3(100.0f, 50.0f, -100.0f); // Moon
+modelPos[8] = glm::vec3(100.0f, 30.0f, -100.0f); // Moon
 
-modelPos[9] = glm::vec3(-25.0f, 1.0f, 20.0f); // Raille
-modelPos[10] = glm::vec3(-35.0f, 1.0f, 20.0f); // Raille
-modelPos[11] = glm::vec3(-45.0f, 1.0f, 20.0f); // Raille
+modelPos[9] = glm::vec3(-105.0f, 1.0f, -25.0f); // Train
+modelPos[10] = glm::vec3(-10.0f, 1.0f, -16.0f); // Tractor
+modelPos[11] = glm::vec3(-10.0f, 1.0f, -65.5f); // Ferme
 
-modelPos[12] = glm::vec3(-55.0f, 1.0f, 20.0f); // Raille
-modelPos[13] = glm::vec3(-65.0f, 1.0f, 20.0f); // Raille
-modelPos[14] = glm::vec3(-75.0f, 1.0f, 20.0f); // Raille
+modelPos[12] = glm::vec3(-50.0f, 10.0f, -65.5f); // Barn
 
-modelPos[15] = glm::vec3(-85.0f, 1.0f, 20.0f); // Raille
-modelPos[16] = glm::vec3(-95.0f, 1.0f, 20.0f); // Raille
-modelPos[17] = glm::vec3(-105.0f, 1.0f, 20.0f); // Raille
-
-modelPos[18] = glm::vec3(-25.0f, 1.0f, -25.0f); // Raille
-modelPos[19] = glm::vec3(-35.0f, 1.0f, -25.0f); // Raille
-modelPos[20] = glm::vec3(-45.0f, 1.0f, -25.0f); // Raille
-
-modelPos[21] = glm::vec3(-55.0f, 1.0f, -25.0f); // Raille
-modelPos[22] = glm::vec3(-65.0f, 1.0f, -25.0f); // Raille
-modelPos[23] = glm::vec3(-75.0f, 1.0f, -25.0f); // Raille
-
-modelPos[24] = glm::vec3(-85.0f, 1.0f, -25.0f); // Raille
-modelPos[25] = glm::vec3(-95.0f, 1.0f, -25.0f); // Raille
-modelPos[26] = glm::vec3(-105.0f, 1.0f, -25.0f); // Raille
-
-modelPos[27] = glm::vec3(-105.0f, 1.0f, -25.0f); // Train
-modelPos[28] = glm::vec3(-10.0f, 1.0f, -16.0f); // Tractor
-modelPos[29] = glm::vec3(-10.0f, 1.0f, -65.5f); // Ferme
-
-modelPos[30] = glm::vec3(-50.0f, 10.0f, -65.5f); // Barn
-
-// If you have additional positions, initialize them similarly...
 
 
 
@@ -245,52 +172,34 @@ modelPos[30] = glm::vec3(-50.0f, 10.0f, -65.5f); // Barn
 glm::vec3 modelScale[numModels]; // Assuming there are 34 elements as in the initial array.
 
 // Assign values to each element
-modelScale[0] = glm::vec3(250.1f, 10.1f, 15.1f); // Road
-modelScale[1] = glm::vec3(250.1f, 10.1f, 15.1f); // Road
+modelScale[0] = glm::vec3(150.1f, 10.1f, 15.1f); // Road
+modelScale[1] = glm::vec3(150.1f, 10.1f, 15.1f); // Road
 modelScale[2] = glm::vec3(5.0f, 7.0f, 4.0f); // Saloon
 
 modelScale[3] = glm::vec3(1.0f, 1.0f, 1.0f); // Paille
 modelScale[4] = glm::vec3(1.0f, 1.0f, 1.0f); // Wagon
-modelScale[5] = glm::vec3(200.0f, 10.0f, 200.0f); // Sahara
+modelScale[5] = glm::vec3(150.0f, 10.0f, 150.0f); // Sahara
 
 modelScale[6] = glm::vec3(5.0f, 5.0f, 5.0f); // Taxi
 modelScale[7] = glm::vec3(75.0f, 75.0f, 75.0f); // Poto
 modelScale[8] = glm::vec3(1.0f, 1.0f, 1.0f); // Moon
 
-modelScale[9] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
-modelScale[10] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
-modelScale[11] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
 
-modelScale[12] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
-modelScale[13] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
-modelScale[14] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
+modelScale[9] = glm::vec3(10.0f, 10.0f, 10.0f); // Train
+modelScale[10] = glm::vec3(0.3f, 0.3f, 0.3f); // Tractor
+modelScale[11] = glm::vec3(1.0f, 1.0f, 1.0f); // Ferme
 
-modelScale[15] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
-modelScale[16] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
-modelScale[17] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
+modelScale[12] = glm::vec3(0.3f, 0.3f, 0.3f); // Barn
 
-modelScale[18] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
-modelScale[19] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
-modelScale[20] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
+initble(mesh,texture,modelPos,modelScale,13,17,		-100.0f,-85.5f,1.0f,	1.0f,1.0f,1.0f		,"ble","ble.png");
+initble(mesh,texture,modelPos,modelScale,30,17,		-100.0f,-105.0f,1.0f,	1.0f,1.0f,1.0f		,"ble","ble.png");
+initble(mesh,texture,modelPos,modelScale,47,17,		-120.0f,40.0f,1.0f,		1.0f,1.0f,1.0f		,"ble","ble.png");
+initble(mesh,texture,modelPos,modelScale,64,17,		-120.0f,60.0f,1.0f,		1.0f,1.0f,1.0f		,"ble","ble.png");
+initble(mesh,texture,modelPos,modelScale,81,17,		-105.0f, -25.0f, 1.0f,	5.0f, 5.0f, 1.0f	,"raille7","raille.png");
+initble(mesh,texture,modelPos,modelScale,98,1,		-105.0f,-25.0f, 35.0f,	5.0f, 5.0f, 5.0f	,"Satellite","Satellite.png");
 
-modelScale[21] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
-modelScale[22] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
-modelScale[23] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
 
-modelScale[24] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
-modelScale[25] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
-modelScale[26] = glm::vec3(5.0f, 1.0f, 5.0f); // Raille
 
-modelScale[27] = glm::vec3(10.0f, 10.0f, 10.0f); // Train
-modelScale[28] = glm::vec3(0.3f, 0.3f, 0.3f); // Tractor
-modelScale[29] = glm::vec3(1.0f, 1.0f, 1.0f); // Ferme
-
-modelScale[30] = glm::vec3(0.3f, 0.3f, 0.3f); // Barn
-
-initble(mesh,texture,modelPos,modelScale,31,17,-100.0f,-85.5f,"ble","ble.png");
-initble(mesh,texture,modelPos,modelScale,48,17,-100.0f,-105.0f,"ble","ble.png");
-initble(mesh,texture,modelPos,modelScale,65,17,-120.0f,40.0f,"ble","ble.png");
-initble(mesh,texture,modelPos,modelScale,82,17,-120.0f,60.0f,"ble","ble.png");
 
 
 
@@ -318,7 +227,8 @@ initble(mesh,texture,modelPos,modelScale,82,17,-120.0f,60.0f,"ble","ble.png");
 		// Poll for and process events
 		glfwPollEvents();
 		update(deltaTime,modelPos[6]);
-		update(deltaTime,modelPos[27]);
+		update(deltaTime,modelPos[9]);
+		updateSatellitePosition(modelPos[98], modelPos[8], 20.0f, 1.5f, currentTime); // Exemple : 20.0f pour le rayon, 0.5f pour la vitesse
 
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -619,8 +529,8 @@ void showFPS(GLFWwindow* window)
 
 	frameCount++;
 }
-void initble(Mesh* mesh, Texture2D* texture, glm::vec3* modelpos, glm::vec3* modelscale, int indice, int nb_itr, float x, float y, const std::string& objName, const std::string& textureName) {
-    int nb_models = nb_itr + indice;
+void initble(Mesh* mesh, Texture2D* texture, glm::vec3* modelpos, glm::vec3* modelscale, int indice, int nb_itr, float pos_x, float pos_y,float pos_z,float scale_x,float scale_y,float scale_z , const std::string& objName, const std::string& textureName) 
+{    int nb_models = nb_itr + indice;
     for (int j = 0; j < nb_itr; j++) {
         // Construct file paths for the object and texture
         std::string objPath = "models/" + objName + ".obj";
@@ -631,7 +541,13 @@ void initble(Mesh* mesh, Texture2D* texture, glm::vec3* modelpos, glm::vec3* mod
         texture[indice + j].loadTexture(texturePath.c_str());
 
         // Set the scale and position for each model
-        modelscale[indice + j] = glm::vec3(1.0f, 1.0f, 1.0f); // Ble scale
-        modelpos[indice + j] = glm::vec3(x + j * 10, 1.0f, y); // Ble position
+        modelscale[indice + j] = glm::vec3(scale_x, scale_z, scale_y); // Ble scale
+        modelpos[indice + j] = glm::vec3(pos_x + j * 10, pos_z, pos_y); // Ble position
     }
+}
+void updateSatellitePosition(glm::vec3& satellitePos, const glm::vec3& moonPos, float orbitRadius, float orbitSpeed, double time) {
+    // Calcul de la nouvelle position du satellite autour de la lune
+    satellitePos.x = moonPos.x + orbitRadius * cos(orbitSpeed * time);
+    satellitePos.z = moonPos.z + orbitRadius * sin(orbitSpeed * time);
+    satellitePos.y = moonPos.y; // Garder la même hauteur que la lune
 }
