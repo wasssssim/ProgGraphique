@@ -51,17 +51,22 @@ struct SpotLight
 	float constant;
 	float linear;
 	float exponent;
+	int enabled;
 };
+
 
   
 in vec2 TexCoord;
 in vec3 FragPos;
 in vec3 Normal;
 
-#define MAX_POINT_LIGHTS 3
+#define MAX_POINT_LIGHTS 19
+#define MAX_SPOT_LIGHTS 2
+
 
 uniform DirectionalLight sunLight;
 uniform PointLight pointLights[MAX_POINT_LIGHTS];
+uniform SpotLight spotLights[MAX_SPOT_LIGHTS];
 uniform SpotLight spotLight;
 uniform Material material;
 uniform vec3 viewPos;
@@ -77,23 +82,28 @@ vec3 calcSpotLightColor(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir
 //-----------------------------------------------------------------------------------------------
 void main()
 { 
-	vec3 normal = normalize(Normal);  
-	vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 normal = normalize(Normal);  
+    vec3 viewDir = normalize(viewPos - FragPos);
 
     // Ambient ----------------------------------------------------------------------------------
 	vec3 ambient = spotLight.ambient * material.ambient * vec3(texture(material.diffuseMap, TexCoord));
-	vec3 outColor = vec3(0.0f);	
+    vec3 outColor = vec3(0.0f);
 
-	outColor += calcDirectionalLightColor(sunLight, normal, viewDir);
+
+
+    outColor += calcDirectionalLightColor(sunLight, normal, viewDir);
 
    for(int i = 0; i < MAX_POINT_LIGHTS; i++)
-        outColor += calcPointLightColor(pointLights[i], normal, FragPos, viewDir);  
+            outColor += calcPointLightColor(pointLights[i], normal, FragPos, viewDir);
+
+	for(int i = 0; i < MAX_SPOT_LIGHTS; i++)
+            outColor += calcSpotLightColor(spotLights[i], normal, FragPos, viewDir);
 
 	// If the light isn't on then just return 0 for diffuse and specular colors
 	if (spotLight.on == 1)
 		outColor += calcSpotLightColor(spotLight, normal, FragPos, viewDir);
 
-	frag_color = vec4(ambient + outColor, 1.0f);
+    frag_color = vec4(ambient + outColor, 1.0f);
 }
 
 //-----------------------------------------------------------------------------------------------
