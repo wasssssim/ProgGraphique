@@ -1,2 +1,2 @@
-g++ -o OpenGLApp Lighting_Multiple.cpp Texture2D.cpp ShaderProgram.cpp Camera.cpp Mesh.cpp -lGLEW -lglfw -lGL
+g++ -o OpenGLApp Lighting_Multiple.cpp cieltexture.cpp Texture2D.cpp ShaderProgram.cpp Camera.cpp Mesh.cpp -lGLEW -lglfw -lGL
 ./OpenGLApp
