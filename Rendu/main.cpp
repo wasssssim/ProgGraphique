@@ -11,8 +11,6 @@
 	#include "GLFW/glfw3.h"
 	#include "glm/glm.hpp"
 	#include "glm/gtc/matrix_transform.hpp"
-
-#include"cieltexture.hpp"
 	#include "ShaderProgram.h"
 	#include "Texture2D.h"
 	#include "Camera.h"
@@ -80,10 +78,6 @@ void moveObject(glm::vec3& currentPos, const glm::vec3& startPos, const glm::vec
 			std::cerr << "GLFW initialization failed" << std::endl;
 			return -1;
 		}
-		cieltexture cieltexture;
-		GLuint skyboxTexture = cieltexture.loadCubemap();
-		ShaderProgram shadercieltexture;
-		shadercieltexture.loadShaders("shaders/cieltexture.vert", "shaders/cieltexture.frag");
 
 
 
@@ -224,7 +218,6 @@ void moveObject(glm::vec3& currentPos, const glm::vec3& startPos, const glm::vec
 	initble(mesh,texture,modelPos,modelScale,81,17,		-105.0f, -25.0f, 1.0f,	5.0f, 5.0f, 1.0f	,"raille7","raille.png",10);
 	initble(mesh,texture,modelPos,modelScale,98,1,		-105.0f,-25.0f, 35.0f,	5.0f, 5.0f, 5.0f	,"Satellite","Satellite.png",10);
 	initble(mesh,texture,modelPos,modelScale,116,2,		-100.0f, -27.0f, 5.0f,	3.0f, 4.0f, 4.0f	,"gare","transparent.png",170);
-	initble(mesh,texture,modelPos,modelScale,118,1,	 	 75.0f, -27.0f, 10.0f,	5.0f, 5.0f, 5.0f	,"man","transparent.png",10);
 	initble(mesh,texture,modelPos,modelScale,119,7	,	-100.0f, 27.0f, 1.0f,	5.0f, 5.0f, 5.0f	,"home","House.png",30);
 	initble(mesh,texture,modelPos,modelScale,126,8	,	-100.0f, 5.0f, 1.0f,	3.0f, 3.0f, 3.0f	,"Cactus","Cactus.png",30);
 	initble(mesh,texture,modelPos,modelScale,143,7,		-100.0f, -7.5f, 1.0f,	3.0f, 3.0f, 3.0f	,"lamp","lamp.png",30);
@@ -702,7 +695,6 @@ glDepthFunc(GL_LESS);
 
 		lightpos[indicelight]= modelpos[indiceobj]+glm::vec3(0.0f,pas_z,0.0f);
 
-		
 
 
 	}
